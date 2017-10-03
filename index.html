@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<link href="css/bootstrap.min.css" rel="stylesheet" />
+<script src="angular/angular.min.js"></script>
+<script src="angular/angular-route.min.js"></script>
+<script src="js/custom.js"></script>
+<link href="css/style.css" rel="stylesheet">
+    
+<body>
+
+<div class="global-wrapper" ng-app="myApp">
+
+  <!-- nav section -->
+  <nav class="navbar navbar-default" ng-controller="navCtrl">
+    <div class="container-fluid">
+      <div class="nav-header">
+        <a href="#" class="navbar-brand hidden-xs">Contact search app</a>
+        <ul class="nav navbar-nav">
+          <li ng-repeat="navLink in nav.navItems" ng-class="{active : $index === nav.selectedIndex}">
+            <a class="text-center" ng-click="nav.navClick($index)" ng-href="#/{{navLink}}">{{navLink}}</a>
+          </li>
+        </ul>
+    	</div>
+    </div>
+  </nav>
+    
+  <div class="container">
+    <div class="row panel panel-primary" ng-controller="homeCtrl">
+      <div class="panel-heading">
+        <h2 class="panel-title">Contact list</h2>
+      </div>
+      
+
+      <!--     contact list   	 -->
+      <div class="col-md-5 panel-body">
+        <ul class="list-group">
+          <li class="list-group-item"> <h4>Contacts:</h4>
+            <input class="form-control" placeholder="Seach Your Contacts" type="text" ng-model="searchText">
+            <contact class="list-group-item" ng-repeat="contact in contacts | orderBy: 'firstName' | filter: searchText "></contact>
+          </li>
+        </ul> 
+      </div>
+      
+      <!--   ng-view below       -->
+      <div class="col-md-6 panel-body">
+        <div class="list-group">
+          <div ng-view></div>
+        </div>
+      </div>
+        
+    </div>
+  </div>
+
+    <!--  html templates used by angular, usually in separate files -->
+    <script type="text/ng-template" id="default.html">
+      <div class="alert alert-success text-center" ng-class="{hidden : !removed}"> {{removed}}</div>
+      <div class="list-group-item text-center">Please select a contact to view</div>
+    </script>
+
+	  <!-- 	template for displaying a contacts info	 -->
+    <script type="text/ng-template" id="contact_info.html">
+      <div class="list-group-item">
+        <h3 class="text-center">{{currentContact.firstName}} {{currentContact.lastName}}</h3>
+        <h3 class="text-center">contactEmail: <a ng-href="{{currentContact.contactEmail}}" >{{currentContact.contactEmail}}</a></h3>
+        <h3 class="text-center">contactNumber: {{currentContact.contactNumber}}</h3>
+       
+
+        <a ng-href="#/edit/{{contacts.indexOf(currentContact)}}">
+          <button class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil"></span><span> Edit</span>
+          </button>
+        </a>
+
+        <a href="#/"><button class="btn btn-default" ng-click="removeContact(currentContact)">
+          <span class="glyphicon glyphicon-remove"></span><span> Remove</span>
+        </button></a>
+      </div>
+    </script>
+
+<!--   template used for both adding a new contact and editing an existing contact   -->
+    <script type="text/ng-template" id="contact_form.html">
+      <div ng-controller="addContactCtrl">
+        <div class="list-group-item">
+            
+            
+         
+            
+            
+          <div class="form-group">
+  
+            <p><label for="firstName">firstName: </label> <input id="firstName" class="form-control" type="text" ng-model="currentContact.firstName"> </p>
+              
+               <p><label for="middleName">middleName: </label> <input id="middleName" class="form-control" type="text" ng-model="currentContact.middleName"> </p>
+              <p><label for="lastName">lastName: </label> <input id="lastName" class="form-control" type="text" ng-model="currentContact.lastName"> </p>
+                
+            
+           <label for="contactEmail">contactEmail:</label> <input id="contactEmail" class="form-control" type="text" ng-model="currentContact.contactEmail" data-error="Enter a valid email" required> 
+             <div class="help-block with-errors"></div>
+         
+          
+            <p><label for="contactNumber">contactNumber:</label> <input id="contactNumber" class="form-control" type="text" ng-model="currentContact.contactNumber"> </p>
+           
+          </div>
+        
+          <a ng-if="path === '/add' " ng-href="#/contact-info/{{ contacts.length - 1 }}" ng-click="addContact()">
+            <button class="btn btn-default">
+             <span class="glyphicon glyphicon-ok"></span>
+             <span> Add</span>
+            </button>
+          </a>
+
+          <a ng-if="path !== '/add'" ng-href="#/contact-info/{{index}}">
+            <button class="btn btn-default">
+             <span class="glyphicon glyphicon-ok"></span>
+             <span>Update</span>
+            </button>
+          </a>
+
+          <a href="#/">
+            <button class="btn btn-default">
+              <span class="glyphicon glyphicon-remove"></span><span>Cancel</span>
+            </button>
+          </a>
+        
+        </div>
+           
+      </div>
+    </script>
+
+<!--      template used for the ng-repeat in the contact list        -->
+    <script type="text/ng-template" id="contact.html">
+      <a ng-href="#/contact-info/{{contacts.indexOf(contact)}}">
+        {{contact.firstName}}
+      </a>
+    </script>
+  </div>
+    
+    
+</body>
+</html>
